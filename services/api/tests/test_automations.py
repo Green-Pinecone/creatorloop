@@ -123,7 +123,10 @@ async def test_internal_endpoints_require_token(client):
         assert (await client.post(path, headers={"X-Internal-Token": "wrong"})).status_code == 401
     ok = await client.post("/internal/maintenance/retention", headers={"X-Internal-Token": TOKEN})
     assert ok.json() == {"purged_device_signals": 0}
-    assert (await client.post("/internal/epochs/run", headers={"X-Internal-Token": TOKEN})).status_code == 501
+    epoch = await client.post("/internal/epochs/run", headers={"X-Internal-Token": TOKEN})
+    assert epoch.status_code == 200 and epoch.json()["status"] == "empty"  # nothing to reward in an empty database
+    again = await client.post("/internal/epochs/run", headers={"X-Internal-Token": TOKEN})
+    assert again.json()["epoch"] == epoch.json()["epoch"]  # same window -> same epoch
 
 
 async def test_internal_503_when_token_unset(client, monkeypatch):
@@ -171,4 +174,4 @@ def test_local_scheduler_registers_all_jobs():
     from app.automations import scheduler
 
     ids = {j.id for j in scheduler.build().get_jobs()}
-    assert ids == {"trust_run", "ledger_check", "retention", "digests"}
+    assert ids == {"trust_run", "epoch_run", "ledger_check", "retention", "digests"}

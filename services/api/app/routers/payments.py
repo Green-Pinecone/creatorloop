@@ -89,6 +89,21 @@ async def creator_fund(acct: Account = Depends(current_account), s: AsyncSession
                               "at": e.created_at.isoformat()} for e in entries]}
 
 
+@router.get("/me/earnings")
+async def earnings(acct: Account = Depends(current_account), s: AsyncSession = Depends(get_session)):
+    """Claimable LOOP epochs with Merkle proofs, plus the fiat creator-fund balance."""
+    from ..db.models import Allocation, Epoch
+
+    rows = (await s.execute(select(Allocation, Epoch).join(Epoch, Epoch.id == Allocation.epoch_id).where(
+        Allocation.account_id == acct.id, Epoch.status == "published").order_by(Epoch.id.desc()))).all()
+    bal = await ledger.balance(s, acct.id)
+    return {"loop": [{"epochId": e.onchain_epoch_id, "amount": str(a.amount_wei), "proof": a.proof,
+                      "claimed": a.claimed} for a, e in rows],
+            "frozen": acct.status == "frozen",
+            "creatorFund": {"available_minor": bal["available_minor"], "held_minor": bal["held_minor"],
+                            "currency": "INR"}}
+
+
 @router.get("/creators/{handle}/supporters")
 async def supporters(handle: str, s: AsyncSession = Depends(get_session)):
     c = await s.scalar(select(Creator).where(Creator.handle == handle))

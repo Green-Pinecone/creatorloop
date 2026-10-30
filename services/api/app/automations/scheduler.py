@@ -4,6 +4,7 @@ Runs the same jobs the viaSocket cron flows call through /internal/*."""
 import structlog
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+from ..config import get_settings
 from ..db.session import session_maker
 from . import jobs
 
@@ -25,6 +26,7 @@ def _wrap(fn):
 def build() -> AsyncIOScheduler:
     sch = AsyncIOScheduler(timezone="UTC")
     sch.add_job(_wrap(jobs.trust_run), "interval", minutes=15, id="trust_run")
+    sch.add_job(_wrap(jobs.epoch_run), "interval", minutes=get_settings().epoch_window_minutes, id="epoch_run")
     sch.add_job(_wrap(jobs.ledger_check), "interval", hours=1, id="ledger_check")
     sch.add_job(_wrap(jobs.retention), "cron", hour=3, id="retention")
     sch.add_job(_wrap(jobs.creator_digests), "cron", day_of_week="mon", hour=3, minute=30, id="digests")

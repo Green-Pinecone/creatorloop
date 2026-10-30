@@ -22,6 +22,7 @@ SAMPLES = {
     "fraud.case_opened": {"case_id": "case-1", "kind": "collusion_ring", "severity": 5, "size": 8},
     "fraud.case_recommended": {"case_id": "case-1", "recommendation": "freeze"},
     "dispute.opened": {"payment_id": "pay_test"},
+    "epoch.published": {"epoch": 1, "onchain_epoch_id": 1, "creators": 3, "total_loop": "2400", "excluded": 1, "tx": "0xabc"},
     "ops.alert": {"title": "test alert", "detail": "from fire_test_events.py", "severity": 2},
     "ledger.entry": {"txn_id": "t-1", "ref": "pay_test", "account_type": "platform_revenue",
                      "amount_minor": 4470, "currency": "INR", "held": False},

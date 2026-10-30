@@ -223,3 +223,33 @@ class LedgerEntry(Base):
     held: Mapped[bool] = mapped_column(default=False)
     ref: Mapped[str] = mapped_column(String, index=True)  # dodo_payment_id / refund id
     created_at: Mapped[datetime] = mapped_column(TS, default=utcnow)
+
+
+class Epoch(Base):
+    __tablename__ = "epochs"
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    window_start: Mapped[datetime] = mapped_column(TS)
+    window_end: Mapped[datetime] = mapped_column(TS, unique=True)  # idempotency key
+    status: Mapped[str] = mapped_column(String)  # scoring | built | pinned | published | empty | failed
+    pool_wei: Mapped[int] = mapped_column(Wei)
+    total_wei: Mapped[int | None] = mapped_column(Wei)
+    root: Mapped[str | None] = mapped_column(String)
+    allocations_cid: Mapped[str | None] = mapped_column(String)
+    tx_hash: Mapped[str | None] = mapped_column(String)
+    onchain_epoch_id: Mapped[int | None] = mapped_column(BigInteger)
+    excluded: Mapped[list] = mapped_column(JSON, default=list)
+    stats: Mapped[dict] = mapped_column(JSON, default=dict)
+    error: Mapped[str | None] = mapped_column(Text)
+
+
+class Allocation(Base):
+    __tablename__ = "allocations"
+    epoch_id: Mapped[int] = mapped_column(ForeignKey("epochs.id"), primary_key=True)
+    account_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("accounts.id"), primary_key=True)
+    wallet: Mapped[str] = mapped_column(String)
+    amount_wei: Mapped[int] = mapped_column(Wei)
+    points: Mapped[float] = mapped_column()
+    proof: Mapped[list] = mapped_column(JSON)
+    claimed: Mapped[bool] = mapped_column(default=False)

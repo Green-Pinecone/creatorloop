@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from . import metadata  # noqa: F401  (registers the ipfs.fetch_metadata outbox handler)
 from .automations import events as _events  # noqa: F401  (registers the viasocket.emit outbox handler)
 from .automations import scheduler
-from .chain import funders  # noqa: F401  (registers the chain.resolve_funder outbox handler)
+from .chain import funders, publisher  # noqa: F401  (register the chain.* outbox handlers)
 from .chain.indexer import run_indexer
 from .config import get_settings
 from .db.models import Base

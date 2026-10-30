@@ -26,6 +26,7 @@ FLOW_FIELDS = {
     "fraud.case_recommended": "viasocket_webhook_fraud",
     "dispute.opened": "viasocket_webhook_fraud",
     "ops.alert": "viasocket_webhook_fraud",
+    "epoch.published": "viasocket_webhook_fraud",  # posted to #ops by flow F3
     "ledger.entry": "viasocket_webhook_ledger",
     "digest.creator": "viasocket_webhook_digest",
 }

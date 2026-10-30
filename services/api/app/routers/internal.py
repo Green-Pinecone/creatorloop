@@ -27,8 +27,8 @@ async def trust_run(s: AsyncSession = Depends(get_session)):
 
 
 @router.post("/epochs/run")
-async def epochs_run():
-    raise HTTPException(501, "epoch runs arrive with Stage 11")
+async def epochs_run(s: AsyncSession = Depends(get_session)):
+    return await jobs.epoch_run(s)
 
 
 @router.post("/digests/creators")

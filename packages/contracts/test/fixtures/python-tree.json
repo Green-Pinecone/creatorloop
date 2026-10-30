@@ -1,0 +1,67 @@
+{
+  "root": "0x919bfa2ff879949f8e0fcfd1ab2feb47446813bcea1a1e42d372ead4e9868c15",
+  "values": [
+    {
+      "privateKeyIndex": 1,
+      "amount": "6550000000000000000",
+      "proof": [
+        "0x71e207fd4e422454b3af526a21abed7d8fb2cdc0b7d395d6957f55df9360ee4d",
+        "0x4744cceabe473a6002136bb090746a6135f3992c9fabe3445560fa2d76eb1488",
+        "0x1ea871cf9fb0fa4e97e475463bd0838bed72f26ba67eb91cdaf87198aed2a23e"
+      ]
+    },
+    {
+      "privateKeyIndex": 2,
+      "amount": "1150000000000000000",
+      "proof": [
+        "0xeaa0382cbe754a4e3b1eb4c5a7bd1f5bf52193ee388ccd64dd61db0e5a36c919",
+        "0xfd152d878cc6757d66ac1aa854c83bb217c3e604cff1ab5cc7099316b84b343c",
+        "0x2686939b5e4876ac957f517a8194bfb65acccc3079639dbda0e8261918d5d276"
+      ]
+    },
+    {
+      "privateKeyIndex": 3,
+      "amount": "260000000000000000",
+      "proof": [
+        "0xf387a0ee6eb15aec562593a55e6af16a8b6ed9a40e917fba76e8c41bd476ee10",
+        "0xfd152d878cc6757d66ac1aa854c83bb217c3e604cff1ab5cc7099316b84b343c",
+        "0x2686939b5e4876ac957f517a8194bfb65acccc3079639dbda0e8261918d5d276"
+      ]
+    },
+    {
+      "privateKeyIndex": 4,
+      "amount": "7600000000000000000",
+      "proof": [
+        "0x3d3b62d748481ea1c353c3f4717262ba798e253e7b8deddb79acf3487440e748",
+        "0xc81779761ae7f827dd3ed2ac0959e3dff1bc80c8a6c188d4fb9a24ebbae344ba",
+        "0x1ea871cf9fb0fa4e97e475463bd0838bed72f26ba67eb91cdaf87198aed2a23e"
+      ]
+    },
+    {
+      "privateKeyIndex": 5,
+      "amount": "2820000000000000000",
+      "proof": [
+        "0x238f3c065ff788693fc8cb3d758115d5383edfa9e229160088fce64cdfaba16c",
+        "0xc81779761ae7f827dd3ed2ac0959e3dff1bc80c8a6c188d4fb9a24ebbae344ba",
+        "0x1ea871cf9fb0fa4e97e475463bd0838bed72f26ba67eb91cdaf87198aed2a23e"
+      ]
+    },
+    {
+      "privateKeyIndex": 6,
+      "amount": "2510000000000000000",
+      "proof": [
+        "0xb2c8c188056a61a04cf79d1ef4f7ce28a34ee6dd686ceef8c6f413c6fbc3c6b3",
+        "0x4744cceabe473a6002136bb090746a6135f3992c9fabe3445560fa2d76eb1488",
+        "0x1ea871cf9fb0fa4e97e475463bd0838bed72f26ba67eb91cdaf87198aed2a23e"
+      ]
+    },
+    {
+      "privateKeyIndex": 7,
+      "amount": "2290000000000000000",
+      "proof": [
+        "0xb1e9fbb3b99865a482daa8411b19bb95f3e6a7d6b27f200131d99b4d6943ebd5",
+        "0x2686939b5e4876ac957f517a8194bfb65acccc3079639dbda0e8261918d5d276"
+      ]
+    }
+  ]
+}

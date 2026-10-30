@@ -6,7 +6,7 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..db.models import Account, Post, Tip, WalletFunder
+from ..db.models import Account, Allocation, Epoch, Post, Tip, WalletFunder
 from ..outbox import enqueue
 
 
@@ -61,4 +61,16 @@ async def apply_event(s: AsyncSession, name: str, args: dict, meta: dict) -> Non
         )
         if await s.get(WalletFunder, frm) is None:
             await enqueue(s, "chain.resolve_funder", {"wallet": frm})
-    # EpochPublished / Claimed / FrozenSet are handled in Stage 11.
+    elif name == "EpochPublished":
+        # Normally already recorded by the scorer; this repairs a crash between sending the tx and saving it.
+        root = "0x" + bytes(args["root"]).hex() if not isinstance(args["root"], str) else args["root"]
+        ep = await s.scalar(select(Epoch).where(Epoch.root == root))
+        if ep is not None and ep.onchain_epoch_id is None:
+            ep.onchain_epoch_id, ep.tx_hash, ep.status = args["epochId"], meta["tx_hash"], "published"
+    elif name == "Claimed":
+        ep = await s.scalar(select(Epoch).where(Epoch.onchain_epoch_id == args["epochId"]))
+        if ep is not None:
+            row = await s.scalar(select(Allocation).where(Allocation.epoch_id == ep.id,
+                                                          Allocation.wallet == args["account"].lower()))
+            if row is not None:
+                row.claimed = True

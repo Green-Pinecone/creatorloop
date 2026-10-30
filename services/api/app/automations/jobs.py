@@ -11,6 +11,7 @@ from ..graph.trust import run_trust_job
 from ..outbox import enqueue
 from ..payments.ledger import unbalanced_txns
 from ..retention import purge_old_signals
+from ..scoring.epoch import run_epoch
 
 TRUST_MIN_INTERVAL = timedelta(minutes=5)
 
@@ -20,6 +21,10 @@ async def trust_run(s: AsyncSession) -> dict:
     if last is not None and utcnow() - last.replace(tzinfo=last.tzinfo or UTC) < TRUST_MIN_INTERVAL:
         return {"skipped": True, "reason": "ran under 5 minutes ago"}
     return await run_trust_job(s, sync.store)
+
+
+async def epoch_run(s: AsyncSession) -> dict:
+    return await run_epoch(s)
 
 
 async def retention(s: AsyncSession) -> dict:

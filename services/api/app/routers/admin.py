@@ -123,3 +123,28 @@ async def ledger_summary(s: AsyncSession = Depends(get_session)):
         totals[key] = totals.get(key, 0) + int(total or 0)
     bad = await unbalanced_txns(s)
     return {"totals_minor": totals, "invariant_ok": not bad, "unbalanced_txns": [str(t) for t in bad]}
+
+
+@router.get("/epochs")
+async def epochs(s: AsyncSession = Depends(get_session)):
+    from ..db.models import Epoch
+    from ..scoring.epoch import summary
+
+    return [summary(e) for e in (await s.scalars(select(Epoch).order_by(Epoch.id.desc()).limit(50))).all()]
+
+
+@router.get("/epochs/{epoch_id}")
+async def epoch_detail(epoch_id: int, s: AsyncSession = Depends(get_session)):
+    """Includes the same engagement paid with and without trust weighting, for the demo comparison."""
+    from ..db.models import Allocation, Epoch
+    from ..scoring.epoch import summary
+
+    e = await s.get(Epoch, epoch_id)
+    if e is None:
+        raise HTTPException(404, "epoch not found")
+    rows = (await s.scalars(select(Allocation).where(Allocation.epoch_id == epoch_id))).all()
+    naive = (e.stats or {}).get("naive_allocations", {})
+    return {**summary(e), "excluded_detail": e.excluded,
+            "allocations": [{"account_id": str(a.account_id), "wallet": a.wallet, "amount": str(a.amount_wei),
+                             "naive_amount": naive.get(str(a.account_id), "0"), "claimed": a.claimed} for a in rows],
+            "naive_only": {k: v for k, v in naive.items() if k not in {str(a.account_id) for a in rows}}}

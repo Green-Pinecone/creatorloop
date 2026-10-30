@@ -72,6 +72,8 @@ class Settings(BaseSettings):
     # rewards
     epoch_pool_loop_wei: int = 10_000 * 10**18
     creator_fund_share_bps: int = 7000
+    epoch_window_minutes: int = 30  # demo; production uses 10080 (7 days)
+    epoch_creator_cap_bps: int = 1000  # no creator gets more than 10% of an epoch
 
     def require(self, *names: str) -> None:
         missing = [n for n in names if not getattr(self, n)]

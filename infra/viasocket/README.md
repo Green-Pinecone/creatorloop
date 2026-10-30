@@ -23,7 +23,7 @@ If not, treat the webhook URL as a secret. Payloads never contain emails or othe
 | Env var | Events delivered |
 |---|---|
 | `VIASOCKET_WEBHOOK_PAYMENT` | `payment.succeeded`, `payment.failed`, `subscription.at_risk` |
-| `VIASOCKET_WEBHOOK_FRAUD` | `fraud.case_opened`, `fraud.case_recommended`, `dispute.opened`, `ops.alert` |
+| `VIASOCKET_WEBHOOK_FRAUD` | `fraud.case_opened`, `fraud.case_recommended`, `dispute.opened`, `ops.alert`, `epoch.published` |
 | `VIASOCKET_WEBHOOK_LEDGER` | `ledger.entry` |
 | `VIASOCKET_WEBHOOK_DIGEST` | `digest.creator` |
 
@@ -39,6 +39,7 @@ Set `VIASOCKET_SIGNING_SECRET` and `INTERNAL_API_TOKEN` too (long random strings
 | `fraud.case_opened` | `case_id, kind, severity, size` |
 | `dispute.opened` | `payment_id` |
 | `ops.alert` | `title, detail, severity` (+ `outbox_id` on dead letters) |
+| `epoch.published` | `epoch, onchain_epoch_id, creators, total_loop, excluded, tx` |
 | `ledger.entry` | `txn_id, ref, account_type, amount_minor, currency, held` |
 | `digest.creator` | `week, handle, display_name, new_supporters, tip_total_wei, tip_count, top_post_id, top_post_reactions` |
 
@@ -56,7 +57,7 @@ the admin console. Severity >= 5: also email the on-call admin.
 
 **F3 Trust + epoch scheduler** (cron, 15 min demo / hourly prod). `POST {API}/internal/trust/run` with header
 `X-Internal-Token`. On the epoch schedule (30 min demo / weekly prod) also `POST /internal/epochs/run`
-(returns 501 until Stage 11). Post the JSON summary to `#ops`; alert on non-2xx.
+(scores, publishes the Merkle root on-chain, returns a summary; safe to call twice for one window). Post the JSON summary to `#ops`; alert on non-2xx.
 
 **F4 Ledger mirror** (ledger webhook). Append `ts, txn_id, ref, account_type, amount_minor, currency, held` to
 the "CreatorLoop Ledger (TEST)" Google Sheet. Duplicate rows on retry are harmless.
@@ -75,7 +76,7 @@ All need header `X-Internal-Token: $INTERNAL_API_TOKEN`: `POST /internal/trust/r
 ## Fallback
 
 If viaSocket is unreachable, set `LOCAL_SCHEDULER=true`: the API runs trust (15 min), ledger check (hourly),
-retention (daily) and digests (Monday) itself. Epoch runs join it in Stage 11.
+retention (daily) and digests (Monday) itself. It also runs epochs on the same cadence as `EPOCH_WINDOW_MINUTES`.
 
 ## Agents (Stage 09)
 
